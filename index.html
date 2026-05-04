@@ -5,171 +5,171 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arqq·a — Ops Dashboard</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-primary:#ffffff; --bg-secondary:#f5f5f3; --bg-tertiary:#eeede9;
+  --text-primary:#1a1a18; --text-secondary:#6b6b67; --text-tertiary:#9b9b96;
+  --border-light:rgba(0,0,0,0.08); --border-mid:rgba(0,0,0,0.14); --border-strong:rgba(0,0,0,0.22);
+  --accent:#E24B4A; --radius-md:8px; --radius-lg:12px;
+}
+@media (prefers-color-scheme:dark) {
   :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f3;
-    --bg-tertiary: #eeede9;
-    --text-primary: #1a1a18;
-    --text-secondary: #6b6b67;
-    --text-tertiary: #9b9b96;
-    --border-light: rgba(0,0,0,0.08);
-    --border-mid: rgba(0,0,0,0.14);
-    --border-strong: rgba(0,0,0,0.22);
-    --accent: #E24B4A;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --bg-primary:#1c1c1a; --bg-secondary:#242422; --bg-tertiary:#2c2c2a;
+    --text-primary:#f0efe9; --text-secondary:#a0a09a; --text-tertiary:#6b6b66;
+    --border-light:rgba(255,255,255,0.07); --border-mid:rgba(255,255,255,0.12); --border-strong:rgba(255,255,255,0.2);
   }
+}
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif; background:var(--bg-tertiary); color:var(--text-primary); min-height:100vh; font-size:14px; line-height:1.5; }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-primary: #1c1c1a;
-      --bg-secondary: #242422;
-      --bg-tertiary: #2c2c2a;
-      --text-primary: #f0efe9;
-      --text-secondary: #a0a09a;
-      --text-tertiary: #6b6b66;
-      --border-light: rgba(255,255,255,0.07);
-      --border-mid: rgba(255,255,255,0.12);
-      --border-strong: rgba(255,255,255,0.2);
-    }
-  }
+/* NAV */
+.topnav { background:var(--bg-primary); border-bottom:0.5px solid var(--border-mid); padding:0 2rem; display:flex; align-items:center; justify-content:space-between; min-height:56px; position:sticky; top:0; z-index:100; gap:10px; flex-wrap:wrap; }
+@media(max-width:900px){.topnav{padding:10px 1rem;}}
+.logo { font-size:17px; font-weight:600; letter-spacing:-0.5px; white-space:nowrap; }
+.logo .dot { color:var(--accent); }
+.nav-right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+select,button { font-family:inherit; font-size:12px; padding:6px 11px; border-radius:var(--radius-md); border:0.5px solid var(--border-mid); background:var(--bg-secondary); color:var(--text-primary); cursor:pointer; outline:none; transition:border-color .15s; }
+select:hover,button:hover { border-color:var(--border-strong); }
+select:focus { border-color:var(--accent); }
+button.primary { background:var(--accent); color:#fff; border-color:transparent; font-weight:500; }
+button.primary:hover { opacity:.88; }
+input[type="date"] { font-family:inherit; font-size:12px; padding:5px 8px; border-radius:var(--radius-md); border:0.5px solid var(--border-mid); background:var(--bg-secondary); color:var(--text-primary); cursor:pointer; outline:none; }
+input[type="date"]:focus { border-color:var(--accent); }
 
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg-tertiary); color: var(--text-primary); min-height: 100vh; font-size: 14px; line-height: 1.5; }
+/* DATE MODE TABS */
+.date-tabs { display:flex; gap:2px; background:var(--bg-secondary); border-radius:var(--radius-md); padding:3px; border:0.5px solid var(--border-light); }
+.date-tab { font-size:11px; font-weight:500; padding:4px 10px; border-radius:6px; border:none; background:transparent; color:var(--text-secondary); cursor:pointer; transition:all .15s; white-space:nowrap; }
+.date-tab.active { background:var(--bg-primary); color:var(--text-primary); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.date-tab:hover:not(.active) { color:var(--text-primary); }
 
-  .topnav { background: var(--bg-primary); border-bottom: 0.5px solid var(--border-mid); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; gap: 12px; flex-wrap: wrap; }
-  @media (max-width: 900px) { .topnav { height: auto; padding: 10px 1rem; } }
+/* DATE CONTROLS */
+.date-controls { display:flex; align-items:center; gap:6px; }
+.nav-arrow { padding:5px 8px; font-size:13px; }
+.date-label { font-size:12px; font-weight:500; color:var(--text-primary); min-width:100px; text-align:center; white-space:nowrap; }
+.date-sep { font-size:11px; color:var(--text-tertiary); }
 
-  .logo { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.5px; white-space: nowrap; }
-  .logo .dot { color: var(--accent); }
+/* LAYOUT */
+.container { max-width:1280px; margin:0 auto; padding:1.5rem 2rem; }
+@media(max-width:768px){.container{padding:1rem;}}
+.grid-full { margin-bottom:1.5rem; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; }
+@media(max-width:768px){.grid-2{grid-template-columns:1fr;}}
+.section-label { font-size:11px; font-weight:500; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.7px; margin-bottom:10px; }
+.card { background:var(--bg-primary); border:0.5px solid var(--border-light); border-radius:var(--radius-lg); padding:16px 18px; }
 
-  .nav-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* STATS */
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-bottom:1.5rem; }
+.stat { background:var(--bg-primary); border:0.5px solid var(--border-light); border-radius:var(--radius-lg); padding:16px 18px; }
+.stat-label { font-size:11px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px; }
+.stat-value { font-size:28px; font-weight:600; line-height:1; }
+.stat-sub { font-size:11px; color:var(--text-tertiary); margin-top:5px; }
+.stat.danger .stat-value { color:#E24B4A; }
+.stat.warn .stat-value { color:#BA7517; }
+.stat.ok .stat-value { color:#1D9E75; }
 
-  select, button { font-family: inherit; font-size: 12px; padding: 6px 11px; border-radius: var(--radius-md); border: 0.5px solid var(--border-mid); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; outline: none; transition: border-color 0.15s; }
-  select:hover, button:hover { border-color: var(--border-strong); }
-  select:focus { border-color: var(--accent); }
-  button.primary { background: var(--accent); color: #fff; border-color: transparent; font-weight: 500; }
-  button.primary:hover { opacity: 0.88; }
+/* WORKLOAD */
+.team-row { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:13px; }
+.team-row:not(:last-child) { border-bottom:0.5px solid var(--border-light); }
+.team-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.team-name { flex:1; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.team-members { font-size:11px; color:var(--text-tertiary); min-width:60px; text-align:right; }
+.workload-bar { flex:2; height:6px; background:var(--bg-secondary); border-radius:3px; overflow:hidden; }
+.workload-fill { height:100%; border-radius:3px; background:#378ADD; transition:width .5s ease; }
+.workload-fill.heavy { background:#E24B4A; }
+.workload-fill.mid { background:#BA7517; }
+.workload-count { font-size:13px; font-weight:500; min-width:28px; text-align:right; }
 
-  .month-nav { display: flex; align-items: center; gap: 4px; }
-  .month-nav button { padding: 5px 9px; font-size: 13px; }
-  .month-label { font-size: 12px; font-weight: 500; color: var(--text-primary); min-width: 110px; text-align: center; white-space: nowrap; }
+/* CLIENT CARDS */
+.client-section-title { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; padding-left:2px; }
+.client-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:10px; }
+.client-card { background:var(--bg-primary); border:0.5px solid var(--border-light); border-radius:var(--radius-lg); padding:14px 16px; transition:border-color .15s; }
+.client-card:hover { border-color:var(--border-strong); }
+.client-card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; gap:6px; }
+.client-name { font-size:13px; font-weight:500; display:flex; align-items:center; gap:5px; flex:1; min-width:0; }
+.client-name-text { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.health-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.dot-green { background:#1D9E75; } .dot-amber { background:#BA7517; } .dot-red { background:#E24B4A; }
+.high-load-badge { font-size:9px; font-weight:700; padding:2px 6px; border-radius:99px; background:#FAEEDA; color:#854F0B; white-space:nowrap; flex-shrink:0; }
+@media(prefers-color-scheme:dark){.high-load-badge{background:#2a1e08;color:#FAC775;}}
+.progress-bar { height:4px; background:var(--bg-secondary); border-radius:2px; margin-bottom:6px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:2px; transition:width .6s ease; }
+.client-meta { display:flex; justify-content:space-between; font-size:11px; color:var(--text-tertiary); }
 
-  .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem; }
-  @media (max-width: 768px) { .container { padding: 1rem; } }
+/* CALENDAR — MONTHLY */
+.cal-header { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:3px; }
+.cal-day-label { font-size:11px; color:var(--text-tertiary); text-align:center; padding:4px 0; font-weight:500; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.cal-cell { min-height:96px; background:var(--bg-secondary); border-radius:6px; padding:6px 7px; font-size:10px; }
+.cal-cell.other-month { opacity:.35; }
+.cal-cell.today { border:1.5px solid var(--accent); }
+.cal-date { font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px; }
+.cal-cell.today .cal-date { color:var(--accent); }
+.cal-cell.future-mtd { opacity:.3; background:var(--bg-tertiary); }
+.cal-task-item { padding:2px 5px; border-radius:3px; margin-bottom:2px; font-size:10px; font-weight:500; line-height:1.4; }
+.cal-task-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+.cal-task-meta { font-size:9px; opacity:.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+.cal-task-item.scheduled { background:#B5D4F4; color:#0C447C; }
+.cal-task-item.review { background:#FAC775; color:#633806; }
+.cal-task-item.published { background:#C0DD97; color:#27500A; }
+.cal-task-item.blocked { background:#F5C4B3; color:#993C1D; }
+.cal-more { font-size:9px; color:var(--text-tertiary); padding:1px 4px; }
+@media(prefers-color-scheme:dark){
+  .cal-task-item.scheduled{background:#0c2640;color:#85B7EB;}
+  .cal-task-item.review{background:#2a1e08;color:#FAC775;}
+  .cal-task-item.published{background:#0f2206;color:#97C459;}
+  .cal-task-item.blocked{background:#2a1010;color:#F5C4B3;}
+}
+.cal-legend { display:flex; gap:14px; margin-top:10px; flex-wrap:wrap; }
+.cal-legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-secondary); }
+.cal-legend-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
 
-  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-  .stat { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 16px 18px; }
-  .stat-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
-  .stat-value { font-size: 28px; font-weight: 600; color: var(--text-primary); line-height: 1; }
-  .stat-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 5px; }
-  .stat.danger .stat-value { color: #E24B4A; }
-  .stat.warn .stat-value { color: #BA7517; }
-  .stat.ok .stat-value { color: #1D9E75; }
+/* CALENDAR — YEAR HEATMAP */
+.year-heatmap { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+@media(max-width:700px){.year-heatmap{grid-template-columns:repeat(2,1fr);}}
+.heatmap-month { background:var(--bg-secondary); border-radius:var(--radius-lg); padding:12px 14px; cursor:pointer; transition:border-color .15s; border:0.5px solid var(--border-light); }
+.heatmap-month:hover { border-color:var(--border-strong); }
+.heatmap-month.active-month { border-color:var(--accent); }
+.hm-month-name { font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:8px; }
+.hm-bar-wrap { height:6px; background:var(--bg-primary); border-radius:3px; overflow:hidden; margin-bottom:5px; }
+.hm-bar { height:100%; border-radius:3px; transition:width .5s ease; }
+.hm-count { font-size:11px; color:var(--text-tertiary); }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
-  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
-  .grid-full { margin-bottom: 1.5rem; }
+/* CALENDAR — AGENDA */
+.agenda-month { margin-bottom:1.25rem; }
+.agenda-month-label { font-size:12px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; padding-left:2px; }
+.agenda-row { display:flex; align-items:center; gap:10px; padding:6px 10px; border-radius:var(--radius-md); background:var(--bg-secondary); margin-bottom:4px; font-size:12px; }
+.agenda-date { min-width:50px; font-weight:500; color:var(--text-secondary); }
+.agenda-name { flex:1; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.agenda-folder { font-size:11px; color:var(--text-tertiary); min-width:80px; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  .section-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; }
+/* TIMELINE */
+.timeline-row { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:0.5px solid var(--border-light); font-size:12px; }
+.timeline-row:last-child { border-bottom:none; }
+.tl-name { min-width:160px; max-width:160px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tl-bar-wrap { flex:1; height:8px; background:var(--bg-secondary); border-radius:4px; overflow:hidden; }
+.tl-bar { height:100%; border-radius:4px; transition:width .6s ease; }
+.tl-pct { min-width:36px; text-align:right; color:var(--text-secondary); font-size:11px; }
+.tl-tasks { min-width:60px; text-align:right; font-size:11px; color:var(--text-tertiary); }
+.tl-due { min-width:64px; text-align:right; font-size:11px; color:var(--text-tertiary); }
+.tl-due.overdue { color:#E24B4A; font-weight:500; }
+.tl-due.soon { color:#BA7517; }
 
-  .card { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 16px 18px; }
-
-  /* Workload */
-  .team-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; }
-  .team-row:not(:last-child) { border-bottom: 0.5px solid var(--border-light); }
-  .team-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-  .team-name { flex: 1; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .team-members { font-size: 11px; color: var(--text-tertiary); min-width: 60px; text-align: right; }
-  .workload-bar { flex: 2; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
-  .workload-fill { height: 100%; border-radius: 3px; background: #378ADD; transition: width 0.5s ease; }
-  .workload-fill.heavy { background: #E24B4A; }
-  .workload-fill.mid { background: #BA7517; }
-  .workload-count { font-size: 13px; font-weight: 500; color: var(--text-primary); min-width: 28px; text-align: right; }
-
-  /* Client cards */
-  .client-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 2px; }
-  .client-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 10px; }
-  .client-card { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 14px 16px; transition: border-color 0.15s; position: relative; }
-  .client-card:hover { border-color: var(--border-strong); }
-  .client-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 6px; }
-  .client-name { font-size: 13px; font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0; }
-  .client-name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .health-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green { background: #1D9E75; }
-  .dot-amber { background: #BA7517; }
-  .dot-red { background: #E24B4A; }
-  .high-load-badge { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 99px; background: #FAEEDA; color: #854F0B; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.3px; }
-  @media (prefers-color-scheme: dark) { .high-load-badge { background: #2a1e08; color: #FAC775; } }
-  .progress-bar { height: 4px; background: var(--bg-secondary); border-radius: 2px; margin-bottom: 6px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-  .client-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); }
-
-  /* Calendar */
-  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .cal-month-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-  .cal-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; }
-  .cal-day-label { font-size: 11px; color: var(--text-tertiary); text-align: center; padding: 4px 0; font-weight: 500; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .cal-cell { min-height: 90px; background: var(--bg-secondary); border-radius: 6px; padding: 6px 7px; font-size: 10px; vertical-align: top; }
-  .cal-cell.other-month { opacity: 0.4; }
-  .cal-date { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
-  .cal-cell.today .cal-date { color: var(--accent); }
-  .cal-cell.today { border: 1.5px solid var(--accent); }
-  .cal-task-item { padding: 2px 5px; border-radius: 3px; margin-bottom: 2px; font-size: 10px; font-weight: 500; cursor: default; line-height: 1.4; }
-  .cal-task-item .cal-task-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-  .cal-task-item .cal-task-meta { font-size: 9px; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-  .cal-task-item.scheduled { background: #B5D4F4; color: #0C447C; }
-  .cal-task-item.review { background: #FAC775; color: #633806; }
-  .cal-task-item.published { background: #C0DD97; color: #27500A; }
-  .cal-task-item.blocked { background: #F5C4B3; color: #993C1D; }
-  .cal-more { font-size: 9px; color: var(--text-tertiary); padding: 1px 4px; }
-  @media (prefers-color-scheme: dark) {
-    .cal-task-item.scheduled { background: #0c2640; color: #85B7EB; }
-    .cal-task-item.review { background: #2a1e08; color: #FAC775; }
-    .cal-task-item.published { background: #0f2206; color: #97C459; }
-    .cal-task-item.blocked { background: #2a1010; color: #F5C4B3; }
-  }
-  .cal-legend { display: flex; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
-  .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
-  .cal-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-
-  /* Timeline */
-  .timeline-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 0.5px solid var(--border-light); font-size: 12px; }
-  .timeline-row:last-child { border-bottom: none; }
-  .tl-name { min-width: 160px; max-width: 160px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-  .tl-bar-wrap { flex: 1; height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
-  .tl-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
-  .tl-pct { min-width: 36px; text-align: right; color: var(--text-secondary); font-size: 11px; }
-  .tl-tasks { min-width: 60px; text-align: right; font-size: 11px; color: var(--text-tertiary); }
-  .tl-due { min-width: 64px; text-align: right; font-size: 11px; color: var(--text-tertiary); }
-  .tl-due.overdue { color: #E24B4A; font-weight: 500; }
-  .tl-due.soon { color: #BA7517; }
-
-  .loader { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 0; color: var(--text-secondary); font-size: 14px; gap: 14px; }
-  .spinner { width: 26px; height: 26px; border: 2px solid var(--border-mid); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .error-box { background: #FCEBEB; color: #A32D2D; border-radius: var(--radius-lg); padding: 16px 18px; font-size: 13px; line-height: 1.7; }
-  @media (prefers-color-scheme: dark) { .error-box { background: #2a0a0a; color: #F09595; } }
-
-  .empty { font-size: 13px; color: var(--text-tertiary); padding: 10px 0; }
-  .last-updated { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
-
-  .badge { font-size: 10px; padding: 2px 8px; border-radius: 99px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-  .badge.todo { background: #F1EFE8; color: #5F5E5A; }
-  .badge.prog { background: #E6F1FB; color: #185FA5; }
-  .badge.review { background: #FAEEDA; color: #854F0B; }
-  .badge.done { background: #EAF3DE; color: #3B6D11; }
-  .badge.block { background: #FCEBEB; color: #A32D2D; }
-  @media (prefers-color-scheme: dark) {
-    .badge.todo { background: #2c2c2a; color: #a0a09a; }
-    .badge.prog { background: #0c2640; color: #85B7EB; }
-    .badge.review { background: #2a1e08; color: #FAC775; }
-    .badge.done { background: #0f2206; color: #97C459; }
-    .badge.block { background: #2a0a0a; color: #F09595; }
-  }
+/* MISC */
+.loader { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 0; color:var(--text-secondary); font-size:14px; gap:14px; }
+.spinner { width:26px; height:26px; border:2px solid var(--border-mid); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin{to{transform:rotate(360deg);}}
+.error-box { background:#FCEBEB; color:#A32D2D; border-radius:var(--radius-lg); padding:16px 18px; font-size:13px; line-height:1.7; }
+@media(prefers-color-scheme:dark){.error-box{background:#2a0a0a;color:#F09595;}}
+.empty { font-size:13px; color:var(--text-tertiary); padding:10px 0; }
+.last-updated { font-size:11px; color:var(--text-tertiary); white-space:nowrap; }
+.badge { font-size:10px; padding:2px 8px; border-radius:99px; font-weight:500; white-space:nowrap; flex-shrink:0; }
+.badge.todo{background:#F1EFE8;color:#5F5E5A;} .badge.prog{background:#E6F1FB;color:#185FA5;}
+.badge.review{background:#FAEEDA;color:#854F0B;} .badge.done{background:#EAF3DE;color:#3B6D11;}
+.badge.block{background:#FCEBEB;color:#A32D2D;}
+@media(prefers-color-scheme:dark){
+  .badge.todo{background:#2c2c2a;color:#a0a09a;} .badge.prog{background:#0c2640;color:#85B7EB;}
+  .badge.review{background:#2a1e08;color:#FAC775;} .badge.done{background:#0f2206;color:#97C459;}
+  .badge.block{background:#2a0a0a;color:#F09595;}
+}
 </style>
 </head>
 <body>
@@ -177,14 +177,46 @@
 <nav class="topnav">
   <div class="logo">arqq<span class="dot">·</span>a <span style="font-size:13px;font-weight:400;color:var(--text-tertiary);">ops dashboard</span></div>
   <div class="nav-right">
-    <div class="month-nav">
-      <button onclick="changeMonth(-1)">‹</button>
-      <span class="month-label" id="monthLabel">—</span>
-      <button onclick="changeMonth(1)">›</button>
+
+    <!-- Mode tabs -->
+    <div class="date-tabs">
+      <button class="date-tab active" id="tabYear"   onclick="setMode('year')">Year</button>
+      <button class="date-tab"        id="tabMonth"  onclick="setMode('month')">Month</button>
+      <button class="date-tab"        id="tabMTD"    onclick="setMode('mtd')">Month to date</button>
+      <button class="date-tab"        id="tabCustom" onclick="setMode('custom')">Custom</button>
     </div>
+
+    <!-- Year controls -->
+    <div class="date-controls" id="ctrlYear">
+      <button class="nav-arrow" onclick="changeYear(-1)">‹</button>
+      <span class="date-label" id="labelYear"></span>
+      <button class="nav-arrow" onclick="changeYear(1)">›</button>
+    </div>
+
+    <!-- Month controls -->
+    <div class="date-controls" id="ctrlMonth" style="display:none;">
+      <button class="nav-arrow" onclick="changeMonth(-1)">‹</button>
+      <span class="date-label" id="labelMonth"></span>
+      <button class="nav-arrow" onclick="changeMonth(1)">›</button>
+    </div>
+
+    <!-- MTD: just shows current month label, no nav needed -->
+    <div class="date-controls" id="ctrlMTD" style="display:none;">
+      <span class="date-label" id="labelMTD"></span>
+    </div>
+
+    <!-- Custom controls -->
+    <div class="date-controls" id="ctrlCustom" style="display:none;">
+      <input type="date" id="customFrom" onchange="onCustomChange()">
+      <span class="date-sep">→</span>
+      <input type="date" id="customTo" onchange="onCustomChange()">
+    </div>
+
+    <!-- Filters -->
     <select id="filterSpace"><option value="all">All spaces</option></select>
     <select id="filterClient"><option value="all">All clients</option></select>
     <select id="filterTeam"><option value="all">All teams</option></select>
+
     <span class="last-updated" id="lastUpdated"></span>
     <button class="primary" onclick="refreshAll()">↻ Refresh</button>
   </div>
@@ -200,325 +232,427 @@
 const API_TOKEN = 'pk_93647571_I5V8ZL90AAK46O5FRIRUE2VH8VZCK2RO';
 const BASE = 'https://api.clickup.com/api/v2';
 let allTasks = [];
-let cuTeams = [];
-let teamMemberMap = {};  // userId -> [teamName, ...]
-let selectedYear = new Date().getFullYear();
-let selectedMonth = new Date().getMonth(); // 0-indexed
-let calViewYear = new Date().getFullYear();
-let calViewMonth = new Date().getMonth();
+let cuTeams  = [];
+let teamMemberMap = {};
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Date state ────────────────────────────────────────────────────────────────
+let dateMode = 'month'; // 'year' | 'month' | 'mtd' | 'custom'
+const now = new Date();
+let selYear  = now.getFullYear();
+let selMonth = now.getMonth();      // 0-indexed
+let customFrom = null;
+let customTo   = null;
 
-function setLoaderMsg(msg) {
-  const el = document.getElementById('loaderMsg');
-  if (el) el.textContent = msg;
-}
+// For calendar section independent nav (month/mtd only)
+let calYear  = now.getFullYear();
+let calMonth = now.getMonth();
 
-async function cu(path) {
-  const r = await fetch(BASE + path, { headers: { Authorization: API_TOKEN } });
-  if (!r.ok) throw new Error('ClickUp API ' + r.status + ' → ' + path);
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function setLoaderMsg(m){ const e=document.getElementById('loaderMsg'); if(e) e.textContent=m; }
+
+async function cu(path){
+  const r = await fetch(BASE+path,{headers:{Authorization:API_TOKEN}});
+  if(!r.ok) throw new Error('ClickUp API '+r.status+' → '+path);
   return r.json();
 }
 
-function updateMonthLabel() {
-  const d = new Date(selectedYear, selectedMonth, 1);
-  document.getElementById('monthLabel').textContent = d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function toDateStr(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+// Returns {start, end} timestamps for current date mode
+function dateRange(){
+  const today = new Date(); today.setHours(23,59,59,999);
+  if(dateMode==='year'){
+    return { start: new Date(selYear,0,1).getTime(), end: new Date(selYear,11,31,23,59,59,999).getTime() };
+  }
+  if(dateMode==='month'){
+    return { start: new Date(selYear,selMonth,1).getTime(), end: new Date(selYear,selMonth+1,0,23,59,59,999).getTime() };
+  }
+  if(dateMode==='mtd'){
+    const t = new Date(); 
+    return { start: new Date(t.getFullYear(),t.getMonth(),1).getTime(), end: Date.now() };
+  }
+  if(dateMode==='custom' && customFrom && customTo){
+    return { start: new Date(customFrom+'T00:00:00').getTime(), end: new Date(customTo+'T23:59:59').getTime() };
+  }
+  // fallback: current month
+  const t2=new Date();
+  return { start: new Date(t2.getFullYear(),t2.getMonth(),1).getTime(), end: new Date(t2.getFullYear(),t2.getMonth()+1,0,23,59,59,999).getTime() };
 }
 
-function changeMonth(dir) {
-  selectedMonth += dir;
-  if (selectedMonth > 11) { selectedMonth = 0; selectedYear++; }
-  if (selectedMonth < 0)  { selectedMonth = 11; selectedYear--; }
-  calViewMonth = selectedMonth;
-  calViewYear = selectedYear;
-  updateMonthLabel();
+function updateLabels(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('labelYear').textContent  = selYear;
+  document.getElementById('labelMonth').textContent = months[selMonth]+' '+selYear;
+  const t=new Date(); document.getElementById('labelMTD').textContent = months[t.getMonth()]+' '+t.getFullYear()+' · to date';
+}
+
+function setMode(mode, skipRender){
+  dateMode = mode;
+  // tabs
+  const tabIds = {year:'tabYear', month:'tabMonth', mtd:'tabMTD', custom:'tabCustom'};
+  const ctrlIds = {year:'ctrlYear', month:'ctrlMonth', mtd:'ctrlMTD', custom:'ctrlCustom'};
+  Object.keys(tabIds).forEach(m=>{
+    const tab = document.getElementById(tabIds[m]);
+    const ctrl = document.getElementById(ctrlIds[m]);
+    if(tab)  tab.classList.toggle('active', m===mode);
+    if(ctrl) ctrl.style.display = m===mode ? 'flex' : 'none';
+  });
+  if(mode==='mtd'){ const t=new Date(); calYear=t.getFullYear(); calMonth=t.getMonth(); }
+  if(mode==='month'){ calYear=selYear; calMonth=selMonth; }
+  updateLabels();
+  if(!skipRender && allTasks.length) renderDashboard();
+}
+
+function changeYear(d){
+  selYear+=d;
+  updateLabels();
+  if(allTasks.length) renderDashboard();
+}
+
+function changeMonth(d){
+  selMonth+=d;
+  if(selMonth>11){selMonth=0;selYear++;}
+  if(selMonth<0){selMonth=11;selYear--;}
+  calYear=selYear; calMonth=selMonth;
+  updateLabels();
+  if(allTasks.length) renderDashboard();
+}
+
+function onCustomChange(){
+  customFrom = document.getElementById('customFrom').value;
+  customTo   = document.getElementById('customTo').value;
+  if(customFrom && customTo && allTasks.length) renderDashboard();
+}
+
+function calNavMonth(d){
+  calMonth+=d;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
   renderDashboard();
 }
 
-function monthRange() {
-  const start = new Date(selectedYear, selectedMonth, 1).getTime();
-  const end   = new Date(selectedYear, selectedMonth + 1, 0, 23, 59, 59, 999).getTime();
-  return { start, end };
+function drillIntoMonth(m){
+  // From year heatmap, switch to month mode for that month
+  selMonth=m; calMonth=m; calYear=selYear;
+  setMode('month');
 }
 
-function inSelectedMonth(ts) {
-  if (!ts) return false;
-  const t = parseInt(ts);
-  const { start, end } = monthRange();
-  return t >= start && t <= end;
-}
-
-function statusClass(s) {
-  if (!s) return 'todo';
-  const n = s.toLowerCase();
-  if (n.includes('progress') || n === 'doing') return 'prog';
-  if (n.includes('review') || n.includes('approval')) return 'review';
-  if (n.includes('complete') || n.includes('done') || n.includes('closed')) return 'done';
-  if (n.includes('block') || n.includes('hold')) return 'block';
+function statusClass(s){
+  if(!s) return 'todo';
+  const n=s.toLowerCase();
+  if(n.includes('progress')||n==='doing') return 'prog';
+  if(n.includes('review')||n.includes('approval')) return 'review';
+  if(n.includes('complete')||n.includes('done')||n.includes('closed')) return 'done';
+  if(n.includes('block')||n.includes('hold')) return 'block';
   return 'todo';
 }
 
-function calTaskClass(s) {
-  if (!s) return 'scheduled';
-  const n = s.toLowerCase();
-  if (n.includes('complete') || n.includes('done') || n.includes('published') || n.includes('closed')) return 'published';
-  if (n.includes('review') || n.includes('approval')) return 'review';
-  if (n.includes('block') || n.includes('hold')) return 'blocked';
+function calClass(s){
+  if(!s) return 'scheduled';
+  const n=s.toLowerCase();
+  if(n.includes('complete')||n.includes('done')||n.includes('published')||n.includes('closed')) return 'published';
+  if(n.includes('review')||n.includes('approval')) return 'review';
+  if(n.includes('block')||n.includes('hold')) return 'blocked';
   return 'scheduled';
 }
 
-function fmtDate(ts) {
-  if (!ts) return '';
-  return new Date(parseInt(ts)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-}
+function fmtDate(ts){ if(!ts) return ''; return new Date(parseInt(ts)).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }
+function fmtDateFull(ts){ if(!ts) return ''; return new Date(parseInt(ts)).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function dueClass(ts){ if(!ts) return ''; const d=parseInt(ts)-Date.now(); if(d<0) return 'overdue'; if(d<7*86400000) return 'soon'; return ''; }
 
-function dueClass(ts) {
-  if (!ts) return '';
-  const diff = parseInt(ts) - Date.now();
-  if (diff < 0) return 'overdue';
-  if (diff < 7 * 86400000) return 'soon';
-  return '';
-}
+function getInitials(n){ if(!n) return '?'; return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
 
-function daysStuck(ts) {
-  if (!ts) return 0;
-  return Math.floor((Date.now() - parseInt(ts)) / 86400000);
-}
+const TCOLORS=[{bg:'#B5D4F4',fg:'#0C447C'},{bg:'#9FE1CB',fg:'#085041'},{bg:'#FAC775',fg:'#633806'},
+  {bg:'#F4C0D1',fg:'#72243E'},{bg:'#CED0F6',fg:'#3C3489'},{bg:'#F5C4B3',fg:'#993C1D'},{bg:'#C0DD97',fg:'#27500A'}];
+function teamColor(n){ let h=0; for(const c of(n||'')) h=(h*31+c.charCodeAt(0))%TCOLORS.length; return TCOLORS[h]; }
 
-function getInitials(name) {
-  if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-}
-
-const TEAM_COLORS = [
-  { bg: '#B5D4F4', fg: '#0C447C' },
-  { bg: '#9FE1CB', fg: '#085041' },
-  { bg: '#FAC775', fg: '#633806' },
-  { bg: '#F4C0D1', fg: '#72243E' },
-  { bg: '#CED0F6', fg: '#3C3489' },
-  { bg: '#F5C4B3', fg: '#993C1D' },
-  { bg: '#C0DD97', fg: '#27500A' },
-];
-function teamColor(name) {
-  let h = 0; for (const c of (name || '')) h = (h * 31 + c.charCodeAt(0)) % TEAM_COLORS.length;
-  return TEAM_COLORS[h];
-}
+const MNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MSHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // ── Data fetching ─────────────────────────────────────────────────────────────
+async function getWorkspaceId(){ const d=await cu('/team'); return d.teams[0].id; }
 
-async function getWorkspaceId() {
-  const d = await cu('/team');
-  return d.teams[0].id;
-}
-
-async function fetchTeams(teamId) {
-  try {
-    const d = await cu('/team/' + teamId + '/group');
-    cuTeams = d.groups || [];
-    teamMemberMap = {};
-    cuTeams.forEach(g => {
-      (g.members || []).forEach(m => {
-        const uid = String(m.id || m.user?.id);
-        if (!teamMemberMap[uid]) teamMemberMap[uid] = [];
+async function fetchTeams(tid){
+  try{
+    const d=await cu('/team/'+tid+'/group');
+    cuTeams=d.groups||[];
+    teamMemberMap={};
+    cuTeams.forEach(g=>{
+      (g.members||[]).forEach(m=>{
+        const uid=String(m.id||m.user?.id);
+        if(!teamMemberMap[uid]) teamMemberMap[uid]=[];
         teamMemberMap[uid].push(g.name);
       });
     });
-  } catch(e) {
-    cuTeams = [];
-  }
+  }catch(e){ cuTeams=[]; }
 }
 
-async function getAllTasks(teamId) {
-  const sData = await cu('/team/' + teamId + '/space?archived=false');
-  const spaces = sData.spaces;
-  const listMap = {};
-
+async function getAllTasks(tid){
+  const sData=await cu('/team/'+tid+'/space?archived=false');
+  const listMap={};
   setLoaderMsg('Loading workspace structure...');
-
-  await Promise.all(spaces.map(async space => {
-    const [fData, flData] = await Promise.all([
-      cu('/space/' + space.id + '/folder?archived=false'),
-      cu('/space/' + space.id + '/list?archived=false')
+  await Promise.all(sData.spaces.map(async sp=>{
+    const [fData,flData]=await Promise.all([
+      cu('/space/'+sp.id+'/folder?archived=false'),
+      cu('/space/'+sp.id+'/list?archived=false')
     ]);
-    flData.lists.forEach(l => {
-      listMap[l.id] = { name: l.name, folderName: 'Unfoldered', spaceName: space.name };
-    });
-    await Promise.all(fData.folders.map(async folder => {
-      const lData = await cu('/folder/' + folder.id + '/list?archived=false');
-      lData.lists.forEach(l => {
-        listMap[l.id] = { name: l.name, folderName: folder.name, spaceName: space.name };
-      });
+    flData.lists.forEach(l=>{ listMap[l.id]={name:l.name,folderName:'Unfoldered',spaceName:sp.name}; });
+    await Promise.all(fData.folders.map(async f=>{
+      const lData=await cu('/folder/'+f.id+'/list?archived=false');
+      lData.lists.forEach(l=>{ listMap[l.id]={name:l.name,folderName:f.name,spaceName:sp.name}; });
     }));
   }));
-
   setLoaderMsg('Fetching tasks...');
-  const tasks = [];
-  let page = 0;
-
-  while (page < 15) {
-    setLoaderMsg('Fetching tasks... (' + tasks.length + ' loaded)');
-    const params = new URLSearchParams({ page, order_by: 'updated', reverse: 'true', include_closed: 'true', subtasks: 'true' });
-    const tData = await cu('/team/' + teamId + '/task?' + params.toString());
-    const batch = tData.tasks || [];
-    batch.forEach(t => {
-      const info = listMap[t.list && t.list.id] || {};
-      t._space    = info.spaceName  || (t.space && t.space.name) || 'Unknown';
-      t._folder   = info.folderName || 'Unfoldered';
-      t._list     = info.name       || (t.list && t.list.name)   || '';
-      // attach team names for assignees
-      t._teams = [];
-      (t.assignees || []).forEach(a => {
-        const uid = String(a.id || a.user?.id);
-        const tnames = teamMemberMap[uid] || [];
-        tnames.forEach(tn => { if (!t._teams.includes(tn)) t._teams.push(tn); });
+  const tasks=[]; let page=0;
+  while(page<15){
+    setLoaderMsg('Fetching tasks... ('+tasks.length+' loaded)');
+    const p=new URLSearchParams({page,order_by:'updated',reverse:'true',include_closed:'true',subtasks:'true'});
+    const tData=await cu('/team/'+tid+'/task?'+p.toString());
+    const batch=tData.tasks||[];
+    batch.forEach(t=>{
+      const info=listMap[t.list?.id]||{};
+      t._space=info.spaceName||(t.space?.name)||'Unknown';
+      t._folder=info.folderName||'Unfoldered';
+      t._list=info.name||(t.list?.name)||'';
+      t._teams=[];
+      (t.assignees||[]).forEach(a=>{
+        const uid=String(a.id||a.user?.id);
+        (teamMemberMap[uid]||[]).forEach(tn=>{ if(!t._teams.includes(tn)) t._teams.push(tn); });
       });
     });
     tasks.push(...batch);
-    if (!batch.length || tData.last_page) break;
+    if(!batch.length||tData.last_page) break;
     page++;
   }
   return tasks;
 }
 
 // ── Filters ───────────────────────────────────────────────────────────────────
-
-function populateFilters() {
-  const spSel = document.getElementById('filterSpace');
-  const clSel = document.getElementById('filterClient');
-  const tmSel = document.getElementById('filterTeam');
-
-  [spSel, clSel, tmSel].forEach(s => { while (s.options.length > 1) s.remove(1); });
-
-  [...new Set(allTasks.map(t => t._space).filter(Boolean))].sort().forEach(s => {
-    const o = document.createElement('option'); o.value = s; o.textContent = s; spSel.appendChild(o);
+function populateFilters(){
+  const spS=document.getElementById('filterSpace');
+  const clS=document.getElementById('filterClient');
+  const tmS=document.getElementById('filterTeam');
+  [spS,clS,tmS].forEach(s=>{ while(s.options.length>1) s.remove(1); });
+  [...new Set(allTasks.map(t=>t._space).filter(Boolean))].sort().forEach(s=>{
+    const o=document.createElement('option'); o.value=s; o.textContent=s; spS.appendChild(o);
   });
-  [...new Set(allTasks.map(t => t._folder).filter(f => f && f !== 'Unfoldered'))].sort().forEach(c => {
-    const o = document.createElement('option'); o.value = c; o.textContent = c; clSel.appendChild(o);
+  [...new Set(allTasks.map(t=>t._folder).filter(f=>f&&f!=='Unfoldered'))].sort().forEach(c=>{
+    const o=document.createElement('option'); o.value=c; o.textContent=c; clS.appendChild(o);
   });
-  cuTeams.forEach(g => {
-    const o = document.createElement('option'); o.value = g.name; o.textContent = g.name; tmSel.appendChild(o);
-  });
-  [spSel, clSel, tmSel].forEach(sel => { sel.onchange = renderDashboard; });
+  cuTeams.forEach(g=>{ const o=document.createElement('option'); o.value=g.name; o.textContent=g.name; tmS.appendChild(o); });
+  [spS,clS,tmS].forEach(s=>{ s.onchange=renderDashboard; });
 }
 
-function getFiltered() {
-  const sp = document.getElementById('filterSpace').value;
-  const cl = document.getElementById('filterClient').value;
-  const tm = document.getElementById('filterTeam').value;
-  const { start, end } = monthRange();
-
-  return allTasks.filter(t => {
-    if (sp !== 'all' && t._space !== sp) return false;
-    if (cl !== 'all' && t._folder !== cl) return false;
-    if (tm !== 'all' && !(t._teams || []).includes(tm)) return false;
-    // month filter: task was created, updated, or due within selected month
-    const dates = [t.date_created, t.date_updated, t.due_date].map(d => d ? parseInt(d) : 0);
-    const active = dates.some(d => d >= start && d <= end);
-    return active;
+function getFiltered(){
+  const sp=document.getElementById('filterSpace').value;
+  const cl=document.getElementById('filterClient').value;
+  const tm=document.getElementById('filterTeam').value;
+  const {start,end}=dateRange();
+  return allTasks.filter(t=>{
+    if(sp!=='all'&&t._space!==sp) return false;
+    if(cl!=='all'&&t._folder!==cl) return false;
+    if(tm!=='all'&&!(t._teams||[]).includes(tm)) return false;
+    const dates=[t.date_created,t.date_updated,t.due_date].map(d=>d?parseInt(d):0);
+    return dates.some(d=>d>=start&&d<=end);
   });
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
+// ── Calendar builders ─────────────────────────────────────────────────────────
 
-function renderDashboard() {
-  const tasks = getFiltered();
-  const now = Date.now();
-  const { start, end } = monthRange();
+function buildMonthCalendar(socialTasks, isMTD){
+  const calMap={};
+  socialTasks.forEach(t=>{
+    if(!t.due_date) return;
+    const d=new Date(parseInt(t.due_date));
+    if(d.getFullYear()!==calYear||d.getMonth()!==calMonth) return;
+    const key=d.getDate();
+    if(!calMap[key]) calMap[key]=[];
+    calMap[key].push(t);
+  });
+  const todayObj=new Date();
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  const cells=[];
+  for(let i=firstDay-1;i>=0;i--) cells.push({day:daysInPrev-i,other:true});
+  for(let i=1;i<=daysInMonth;i++) cells.push({day:i,other:false});
+  while(cells.length<42) cells.push({day:cells.length-firstDay-daysInMonth+1,other:true});
+
+  const calMonthLabel=MNAMES[calMonth]+' '+calYear;
+  const showNav=!(dateMode==='year');
+
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div class="section-label" style="margin-bottom:0;">Social media calendar</div>
+      ${showNav?`<div style="display:flex;align-items:center;gap:6px;">
+        <button onclick="calNavMonth(-1)" style="padding:4px 10px;">‹</button>
+        <span style="font-size:13px;font-weight:600;min-width:130px;text-align:center;">${calMonthLabel}</span>
+        <button onclick="calNavMonth(1)" style="padding:4px 10px;">›</button>
+      </div>`:`<span style="font-size:13px;font-weight:600;">${calMonthLabel}</span>`}
+    </div>
+    <div class="card" style="padding:16px;">
+      <div class="cal-header">
+        ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-day-label">${d}</div>`).join('')}
+      </div>
+      <div class="cal-grid">
+        ${cells.map(cell=>{
+          const tasks=(!cell.other&&calMap[cell.day])||[];
+          const isToday=!cell.other&&cell.day===todayObj.getDate()&&calMonth===todayObj.getMonth()&&calYear===todayObj.getFullYear();
+          const isFutureMTD=isMTD&&!cell.other&&
+            new Date(calYear,calMonth,cell.day)>new Date(todayObj.getFullYear(),todayObj.getMonth(),todayObj.getDate());
+          return `<div class="cal-cell${cell.other?' other-month':''}${isToday?' today':''}${isFutureMTD?' future-mtd':''}">
+            <div class="cal-date">${cell.day}</div>
+            ${tasks.slice(0,3).map(t=>{
+              const cls=calClass(t.status?.status);
+              const assignee=t.assignees?.[0]?getInitials(t.assignees[0].username||t.assignees[0].email||''):'';
+              return `<div class="cal-task-item ${cls}">
+                <span class="cal-task-name">${t.name}</span>
+                <span class="cal-task-meta">${assignee?assignee+' · ':''}${t.status?.status||''}</span>
+              </div>`;
+            }).join('')}
+            ${tasks.length>3?`<div class="cal-more">+${tasks.length-3} more</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#B5D4F4;"></div>Scheduled</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FAC775;"></div>In review</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#C0DD97;"></div>Published</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#F5C4B3;"></div>Blocked</div>
+      </div>
+    </div>`;
+}
+
+function buildYearHeatmap(socialTasks){
+  const monthlyCounts=Array(12).fill(0);
+  socialTasks.forEach(t=>{
+    if(!t.due_date) return;
+    const d=new Date(parseInt(t.due_date));
+    if(d.getFullYear()!==selYear) return;
+    monthlyCounts[d.getMonth()]++;
+  });
+  const maxCount=Math.max(...monthlyCounts,1);
+  const heatColors=['#E6F1FB','#B5D4F4','#85B7EB','#378ADD','#185FA5','#0C447C'];
+  function heatColor(count){
+    if(count===0) return heatColors[0];
+    const idx=Math.min(Math.ceil((count/maxCount)*5),5);
+    return heatColors[idx];
+  }
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="section-label" style="margin-bottom:0;">Social media calendar — ${selYear} overview</div>
+      <span style="font-size:11px;color:var(--text-tertiary);">Click a month to drill in</span>
+    </div>
+    <div class="year-heatmap">
+      ${MNAMES.map((name,i)=>{
+        const count=monthlyCounts[i];
+        const pct=Math.round((count/maxCount)*100);
+        const isCurrentMonth=i===new Date().getMonth()&&selYear===new Date().getFullYear();
+        return `<div class="heatmap-month${isCurrentMonth?' active-month':''}" onclick="drillIntoMonth(${i})">
+          <div class="hm-month-name">${name}</div>
+          <div class="hm-bar-wrap"><div class="hm-bar" style="width:${pct}%;background:${heatColor(count)};"></div></div>
+          <div class="hm-count">${count} task${count!==1?'s':''}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function buildAgendaCalendar(socialTasks){
+  const {start,end}=dateRange();
+  const relevant=socialTasks.filter(t=>t.due_date&&parseInt(t.due_date)>=start&&parseInt(t.due_date)<=end);
+  relevant.sort((a,b)=>parseInt(a.due_date)-parseInt(b.due_date));
+  const byMonth={};
+  relevant.forEach(t=>{
+    const d=new Date(parseInt(t.due_date));
+    const key=d.getFullYear()+'-'+d.getMonth();
+    if(!byMonth[key]) byMonth[key]={label:MNAMES[d.getMonth()]+' '+d.getFullYear(),tasks:[]};
+    byMonth[key].tasks.push(t);
+  });
+  const months=Object.values(byMonth);
+  if(!months.length) return `<div class="section-label">Social media calendar</div><div class="card"><div class="empty">No social tasks in this date range</div></div>`;
+  return `
+    <div class="section-label">Social media calendar — agenda view</div>
+    <div class="card" style="padding:16px;">
+      ${months.map(m=>`
+        <div class="agenda-month">
+          <div class="agenda-month-label">${m.label}</div>
+          ${m.tasks.map(t=>{
+            const cls=calClass(t.status?.status);
+            const assignee=t.assignees?.[0]?getInitials(t.assignees[0].username||t.assignees[0].email||''):'';
+            return `<div class="agenda-row">
+              <div class="agenda-date">${fmtDate(t.due_date)}</div>
+              <div style="width:8px;height:8px;border-radius:2px;flex-shrink:0;background:${cls==='published'?'#C0DD97':cls==='review'?'#FAC775':cls==='blocked'?'#F5C4B3':'#B5D4F4'};"></div>
+              <div class="agenda-name">${t.name}</div>
+              ${assignee?`<div style="font-size:11px;color:var(--text-tertiary);min-width:24px;">${assignee}</div>`:''}
+              <div class="agenda-folder">${t._folder}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const tasks=getFiltered();
+  const nowTs=Date.now();
+  const {start,end}=dateRange();
 
   // Stats
   const total      = tasks.length;
-  const overdue    = tasks.filter(t => t.due_date && parseInt(t.due_date) < now && !['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))).length;
-  const inProgress = tasks.filter(t => (t.status?.status||'').toLowerCase().includes('progress')).length;
-  const done       = tasks.filter(t => ['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))).length;
-  const dueSoon    = tasks.filter(t => t.due_date && parseInt(t.due_date) > now && parseInt(t.due_date) < now + 3*86400000).length;
-  const blocked    = tasks.filter(t => (t.status?.status||'').toLowerCase().includes('block')).length;
+  const overdue    = tasks.filter(t=>t.due_date&&parseInt(t.due_date)<nowTs&&!['complete','closed','done'].some(x=>(t.status?.status||'').toLowerCase().includes(x))).length;
+  const inProgress = tasks.filter(t=>(t.status?.status||'').toLowerCase().includes('progress')).length;
+  const done       = tasks.filter(t=>['complete','closed','done'].some(x=>(t.status?.status||'').toLowerCase().includes(x))).length;
+  const dueSoon    = tasks.filter(t=>t.due_date&&parseInt(t.due_date)>nowTs&&parseInt(t.due_date)<nowTs+3*86400000).length;
+  const blocked    = tasks.filter(t=>(t.status?.status||'').toLowerCase().includes('block')).length;
 
-  // ── Team workload (by ClickUp group) ──────────────────────────────────────
-  const teamWork = {};
-  cuTeams.forEach(g => { teamWork[g.name] = { name: g.name, count: 0, members: g.members?.length || 0 }; });
-  tasks.forEach(t => {
-    (t._teams || []).forEach(tn => { if (teamWork[tn]) teamWork[tn].count++; });
-  });
-  const wList = Object.values(teamWork).filter(t => t.count > 0).sort((a,b) => b.count - a.count);
-  const maxW = wList[0]?.count || 1;
+  // Period label for stats sub
+  let periodLabel='this period';
+  if(dateMode==='month') periodLabel='this month';
+  if(dateMode==='year')  periodLabel='this year';
+  if(dateMode==='mtd')   periodLabel='month to date';
+  if(dateMode==='custom'&&customFrom&&customTo) periodLabel=customFrom+' → '+customTo;
 
-  // ── Social clients (Operations space) ─────────────────────────────────────
-  const weekStart = new Date(); weekStart.setHours(0,0,0,0); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+  // Team workload
+  const teamWork={};
+  cuTeams.forEach(g=>{ teamWork[g.name]={name:g.name,count:0,members:g.members?.length||0}; });
+  tasks.forEach(t=>{ (t._teams||[]).forEach(tn=>{ if(teamWork[tn]) teamWork[tn].count++; }); });
+  const wList=Object.values(teamWork).filter(t=>t.count>0).sort((a,b)=>b.count-a.count);
+  const maxW=wList[0]?.count||1;
 
-  const socialClients = {};
-  const webAppClients = {};
+  // Client cards
+  const weekStart=new Date(); weekStart.setHours(0,0,0,0); weekStart.setDate(weekStart.getDate()-weekStart.getDay());
+  const weekEnd=new Date(weekStart); weekEnd.setDate(weekEnd.getDate()+7);
 
-  tasks.forEach(t => {
-    if (!t._folder || t._folder === 'Unfoldered') return;
-    const isWeb = t._space && (t._space.toLowerCase().includes('web') || t._space.toLowerCase().includes('app'));
-    const bucket = isWeb ? webAppClients : socialClients;
-    if (!bucket[t._folder]) bucket[t._folder] = { name: t._folder, total:0, done:0, overdue:0, thisWeek:0 };
+  const socialClients={}, webAppClients={};
+  tasks.forEach(t=>{
+    if(!t._folder||t._folder==='Unfoldered') return;
+    const isWeb=t._space&&(t._space.toLowerCase().includes('web')||t._space.toLowerCase().includes('app'));
+    const bucket=isWeb?webAppClients:socialClients;
+    if(!bucket[t._folder]) bucket[t._folder]={name:t._folder,total:0,done:0,overdue:0,thisWeek:0};
     bucket[t._folder].total++;
-    if (['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))) bucket[t._folder].done++;
-    if (t.due_date && parseInt(t.due_date) < now) bucket[t._folder].overdue++;
-    // this-week activity for High Load badge
-    if (!isWeb) {
-      const upd = parseInt(t.date_updated || 0);
-      const due = parseInt(t.due_date || 0);
-      if ((upd >= weekStart.getTime() && upd < weekEnd.getTime()) || (due >= weekStart.getTime() && due < weekEnd.getTime())) {
-        bucket[t._folder].thisWeek++;
-      }
+    if(['complete','closed','done'].some(x=>(t.status?.status||'').toLowerCase().includes(x))) bucket[t._folder].done++;
+    if(t.due_date&&parseInt(t.due_date)<nowTs) bucket[t._folder].overdue++;
+    if(!isWeb){
+      const upd=parseInt(t.date_updated||0), due=parseInt(t.due_date||0);
+      if((upd>=weekStart.getTime()&&upd<weekEnd.getTime())||(due>=weekStart.getTime()&&due<weekEnd.getTime())) bucket[t._folder].thisWeek++;
     }
   });
+  const socialCList=Object.values(socialClients).sort((a,b)=>b.total-a.total);
+  const webAppCList=Object.values(webAppClients).sort((a,b)=>b.total-a.total);
+  const highLoadSet=new Set([...socialCList].sort((a,b)=>b.thisWeek-a.thisWeek).slice(0,3).filter(c=>c.thisWeek>0).map(c=>c.name));
 
-  const socialCList  = Object.values(socialClients).sort((a,b) => b.total - a.total);
-  const webAppCList  = Object.values(webAppClients).sort((a,b) => b.total - a.total);
-
-  // Top 3 by this-week activity = High Load
-  const highLoadSet = new Set(
-    [...socialCList].sort((a,b) => b.thisWeek - a.thisWeek).slice(0, 3).filter(c => c.thisWeek > 0).map(c => c.name)
-  );
-
-  // ── Social calendar (full month) ──────────────────────────────────────────
-  const socialTasks = allTasks.filter(t => (t._list||'').toLowerCase().includes('social'));
-  const calMap = {};
-  socialTasks.forEach(t => {
-    if (!t.due_date) return;
-    const d = new Date(parseInt(t.due_date));
-    if (d.getFullYear() !== calViewYear || d.getMonth() !== calViewMonth) return;
-    const key = d.getDate();
-    if (!calMap[key]) calMap[key] = [];
-    calMap[key].push(t);
-  });
-
-  // Build full-month calendar grid (pad with prev/next month days)
-  const firstDay = new Date(calViewYear, calViewMonth, 1).getDay();
-  const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
-  const daysInPrev  = new Date(calViewYear, calViewMonth, 0).getDate();
-  const calCells = [];
-  for (let i = firstDay - 1; i >= 0; i--) calCells.push({ day: daysInPrev - i, otherMonth: true });
-  for (let i = 1; i <= daysInMonth; i++) calCells.push({ day: i, otherMonth: false });
-  const remaining = 42 - calCells.length;
-  for (let i = 1; i <= remaining; i++) calCells.push({ day: i, otherMonth: true });
-  const todayDate = new Date();
-
-  // ── Web timeline (full width) ─────────────────────────────────────────────
-  const webTasks = allTasks.filter(t => t._space && (t._space.toLowerCase().includes('web') || t._space.toLowerCase().includes('app')));
-  const webMap = {};
-  webTasks.forEach(t => {
-    if (!webMap[t._folder]) webMap[t._folder] = { name: t._folder, total:0, done:0, due: null };
-    webMap[t._folder].total++;
-    if (['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))) webMap[t._folder].done++;
-    if (t.due_date && (!webMap[t._folder].due || parseInt(t.due_date) > webMap[t._folder].due)) webMap[t._folder].due = parseInt(t.due_date);
-  });
-  const wbList = Object.values(webMap).sort((a,b) => (a.due||0) - (b.due||0));
-
-  // ── Client card renderer ──────────────────────────────────────────────────
-  function clientCardHTML(c, isHighLoad) {
-    const pct = c.total ? Math.round((c.done / c.total) * 100) : 0;
-    const health = c.overdue > 3 ? 'dot-red' : c.overdue > 0 ? 'dot-amber' : 'dot-green';
-    const healthLabel = c.overdue > 3 ? 'at risk' : c.overdue > 0 ? 'watch' : 'on track';
-    const barColor = pct > 70 ? '#1D9E75' : pct > 40 ? '#BA7517' : '#E24B4A';
+  function clientCardHTML(c,hl){
+    const pct=c.total?Math.round((c.done/c.total)*100):0;
+    const health=c.overdue>3?'dot-red':c.overdue>0?'dot-amber':'dot-green';
+    const healthLabel=c.overdue>3?'at risk':c.overdue>0?'watch':'on track';
+    const barColor=pct>70?'#1D9E75':pct>40?'#BA7517':'#E24B4A';
     return `<div class="client-card">
       <div class="client-card-header">
         <div class="client-name"><span class="health-dot ${health}"></span><span class="client-name-text" title="${c.name}">${c.name}</span></div>
-        ${isHighLoad ? '<span class="high-load-badge">⚡ High Load</span>' : ''}
+        ${hl?'<span class="high-load-badge">⚡ High Load</span>':''}
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${barColor}"></div></div>
       <div class="client-meta"><span>${pct}% done</span><span>${healthLabel}</span></div>
@@ -526,11 +660,37 @@ function renderDashboard() {
     </div>`;
   }
 
-  // ── Render HTML ───────────────────────────────────────────────────────────
-  document.getElementById('mainContent').innerHTML = `
+  // Social calendar section
+  const socialTasks=allTasks.filter(t=>(t._list||'').toLowerCase().includes('social'));
+  let calSection='';
+  if(dateMode==='year'){
+    calSection=`<div class="grid-full">${buildYearHeatmap(socialTasks)}</div>`;
+  } else if(dateMode==='custom'){
+    // Check if range spans multiple months
+    const cf=customFrom?new Date(customFrom+'T00:00:00'):null;
+    const ct=customTo?new Date(customTo+'T23:59:59'):null;
+    const singleMonth=cf&&ct&&cf.getFullYear()===ct.getFullYear()&&cf.getMonth()===ct.getMonth();
+    if(singleMonth){ calYear=cf.getFullYear(); calMonth=cf.getMonth(); calSection=`<div class="grid-full">${buildMonthCalendar(socialTasks,false)}</div>`; }
+    else if(cf&&ct){ calSection=`<div class="grid-full">${buildAgendaCalendar(socialTasks)}</div>`; }
+  } else {
+    calSection=`<div class="grid-full">${buildMonthCalendar(socialTasks,dateMode==='mtd')}</div>`;
+  }
 
+  // Web timeline
+  const webTasks=allTasks.filter(t=>t._space&&(t._space.toLowerCase().includes('web')||t._space.toLowerCase().includes('app')));
+  const webMap={};
+  webTasks.forEach(t=>{
+    if(!webMap[t._folder]) webMap[t._folder]={name:t._folder,total:0,done:0,due:null};
+    webMap[t._folder].total++;
+    if(['complete','closed','done'].some(x=>(t.status?.status||'').toLowerCase().includes(x))) webMap[t._folder].done++;
+    if(t.due_date&&(!webMap[t._folder].due||parseInt(t.due_date)>webMap[t._folder].due)) webMap[t._folder].due=parseInt(t.due_date);
+  });
+  const wbList=Object.values(webMap).sort((a,b)=>(a.due||0)-(b.due||0));
+
+  // ── Build HTML ──────────────────────────────────────────────────────────────
+  document.getElementById('mainContent').innerHTML = `
     <div class="stat-grid">
-      <div class="stat"><div class="stat-label">Total tasks</div><div class="stat-value">${total}</div><div class="stat-sub">this month</div></div>
+      <div class="stat"><div class="stat-label">Total tasks</div><div class="stat-value">${total}</div><div class="stat-sub">${periodLabel}</div></div>
       <div class="stat danger"><div class="stat-label">Overdue</div><div class="stat-value">${overdue}</div><div class="stat-sub">need attention</div></div>
       <div class="stat"><div class="stat-label">In progress</div><div class="stat-value">${inProgress}</div></div>
       <div class="stat ok"><div class="stat-label">Completed</div><div class="stat-value">${done}</div></div>
@@ -541,10 +701,10 @@ function renderDashboard() {
     <div class="grid-full">
       <div class="section-label">Team workload</div>
       <div class="card">
-        ${wList.length ? wList.map(w => {
-          const pct = Math.round((w.count / maxW) * 100);
-          const cls = pct > 80 ? 'heavy' : pct > 50 ? 'mid' : '';
-          const col = teamColor(w.name);
+        ${wList.length?wList.map(w=>{
+          const pct=Math.round((w.count/maxW)*100);
+          const cls=pct>80?'heavy':pct>50?'mid':'';
+          const col=teamColor(w.name);
           return `<div class="team-row">
             <div class="team-icon" style="background:${col.bg};color:${col.fg}">${getInitials(w.name)}</div>
             <div class="team-name">${w.name}</div>
@@ -552,7 +712,7 @@ function renderDashboard() {
             <div class="workload-bar"><div class="workload-fill ${cls}" style="width:${pct}%"></div></div>
             <div class="workload-count">${w.count}</div>
           </div>`;
-        }).join('') : '<div class="empty">No team task data for this period</div>'}
+        }).join(''):'<div class="empty">No team task data for this period</div>'}
       </div>
     </div>
 
@@ -564,115 +724,67 @@ function renderDashboard() {
           <span style="font-size:11px;padding:2px 9px;border-radius:99px;background:#EAF3DE;color:#3B6D11;font-weight:500;">● Web &amp; apps</span>
         </div>
       </div>
-
-      ${socialCList.length ? `
+      ${socialCList.length?`
         <div class="client-section-title" style="color:#185FA5;">Social media clients — Operations</div>
-        <div class="client-grid" style="margin-bottom:18px;">
-          ${socialCList.map(c => clientCardHTML(c, highLoadSet.has(c.name))).join('')}
-        </div>` : ''}
-
-      ${webAppCList.length ? `
+        <div class="client-grid" style="margin-bottom:18px;">${socialCList.map(c=>clientCardHTML(c,highLoadSet.has(c.name))).join('')}</div>`:''}
+      ${webAppCList.length?`
         <div class="client-section-title" style="color:#3B6D11;">Web &amp; apps clients — Websites &amp; Apps</div>
-        <div class="client-grid">
-          ${webAppCList.map(c => clientCardHTML(c, false)).join('')}
-        </div>` : ''}
-
-      ${!socialCList.length && !webAppCList.length ? '<div class="empty">No client data for this period</div>' : ''}
+        <div class="client-grid">${webAppCList.map(c=>clientCardHTML(c,false)).join('')}</div>`:''}
+      ${!socialCList.length&&!webAppCList.length?'<div class="empty">No client data for this period</div>':''}
     </div>
 
-    <div class="grid-full">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-        <div class="section-label" style="margin-bottom:0;">Social media calendar</div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <button onclick="calNav(-1)" style="padding:4px 10px;">‹</button>
-          <span style="font-size:13px;font-weight:600;color:var(--text-primary);min-width:120px;text-align:center;" id="calMonthLabel"></span>
-          <button onclick="calNav(1)" style="padding:4px 10px;">›</button>
-        </div>
-      </div>
-      <div class="card" style="padding:16px;">
-        <div class="cal-header">
-          ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-day-label">${d}</div>`).join('')}
-        </div>
-        <div class="cal-grid">
-          ${calCells.map(cell => {
-            const tasks = (!cell.otherMonth && calMap[cell.day]) ? calMap[cell.day] : [];
-            const isToday = !cell.otherMonth && cell.day === todayDate.getDate() && calViewMonth === todayDate.getMonth() && calViewYear === todayDate.getFullYear();
-            return `<div class="cal-cell${cell.otherMonth ? ' other-month' : ''}${isToday ? ' today' : ''}">
-              <div class="cal-date">${cell.day}</div>
-              ${tasks.slice(0, 3).map(t => {
-                const cls = calTaskClass(t.status?.status);
-                const assignee = t.assignees?.[0] ? getInitials(t.assignees[0].username || t.assignees[0].email || '') : '';
-                return `<div class="cal-task-item ${cls}">
-                  <span class="cal-task-name">${t.name}</span>
-                  <span class="cal-task-meta">${assignee ? assignee + ' · ' : ''}${t.status?.status || ''}</span>
-                </div>`;
-              }).join('')}
-              ${tasks.length > 3 ? `<div class="cal-more">+${tasks.length - 3} more</div>` : ''}
-            </div>`;
-          }).join('')}
-        </div>
-        <div class="cal-legend">
-          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#B5D4F4;"></div>Scheduled</div>
-          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FAC775;"></div>In review</div>
-          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#C0DD97;"></div>Published</div>
-          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#F5C4B3;"></div>Blocked</div>
-        </div>
-      </div>
-    </div>
+    ${calSection}
 
     <div class="grid-full">
       <div class="section-label">Websites &amp; apps — delivery timeline</div>
       <div class="card">
-        ${wbList.length ? wbList.map(c => {
-          const pct = c.total ? Math.round((c.done / c.total) * 100) : 0;
-          const barColor = pct > 70 ? '#1D9E75' : pct > 40 ? '#BA7517' : '#E24B4A';
-          const dc = c.due ? (c.due < now ? 'overdue' : c.due < now + 7*86400000 ? 'soon' : '') : '';
+        ${wbList.length?wbList.map(c=>{
+          const pct=c.total?Math.round((c.done/c.total)*100):0;
+          const barColor=pct>70?'#1D9E75':pct>40?'#BA7517':'#E24B4A';
+          const dc=c.due?(c.due<nowTs?'overdue':c.due<nowTs+7*86400000?'soon':''):'';
           return `<div class="timeline-row">
             <div class="tl-name">${c.name}</div>
             <div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%;background:${barColor}"></div></div>
             <div class="tl-pct">${pct}%</div>
             <div class="tl-tasks">${c.total} tasks</div>
-            <div class="tl-due ${dc}">${c.due ? fmtDate(c.due) : 'no date'}</div>
+            <div class="tl-due ${dc}">${c.due?fmtDate(c.due):'no date'}</div>
           </div>`;
-        }).join('') : '<div class="empty">No web/app tasks found in the Websites &amp; Apps space</div>'}
+        }).join(''):'<div class="empty">No web/app tasks found in the Websites &amp; Apps space</div>'}
       </div>
     </div>
   `;
-
-  // Update calendar month label
-  const calLabel = document.getElementById('calMonthLabel');
-  if (calLabel) calLabel.textContent = new Date(calViewYear, calViewMonth, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
-function calNav(dir) {
-  calViewMonth += dir;
-  if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
-  if (calViewMonth < 0)  { calViewMonth = 11; calViewYear--; }
-  renderDashboard();
-}
-
-async function refreshAll() {
-  document.getElementById('mainContent').innerHTML = '<div class="loader"><div class="spinner"></div><span id="loaderMsg">Refreshing...</span></div>';
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+async function refreshAll(){
+  document.getElementById('mainContent').innerHTML='<div class="loader"><div class="spinner"></div><span id="loaderMsg">Refreshing...</span></div>';
   await loadData();
 }
 
-async function loadData() {
-  try {
-    document.getElementById('lastUpdated').textContent = '';
-    updateMonthLabel();
-    const teamId = await getWorkspaceId();
-    document.getElementById('mainContent').innerHTML = '<div class="loader"><div class="spinner"></div><span id="loaderMsg">Loading teams...</span></div>';
-    await fetchTeams(teamId);
-    allTasks = await getAllTasks(teamId);
+async function loadData(){
+  try{
+    document.getElementById('lastUpdated').textContent='';
+    // Default custom date range to current month
+    const t=new Date();
+    document.getElementById('customFrom').value=toDateStr(new Date(t.getFullYear(),t.getMonth(),1));
+    document.getElementById('customTo').value=toDateStr(new Date(t.getFullYear(),t.getMonth()+1,0));
+    customFrom=document.getElementById('customFrom').value;
+    customTo=document.getElementById('customTo').value;
+    updateLabels();
+    setMode('month', true); // set default mode but skip render — no tasks yet
+    const tid=await getWorkspaceId();
+    document.getElementById('mainContent').innerHTML='<div class="loader"><div class="spinner"></div><span id="loaderMsg">Loading teams...</span></div>';
+    await fetchTeams(tid);
+    allTasks=await getAllTasks(tid);
     populateFilters();
     renderDashboard();
-    document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-  } catch(e) {
-    document.getElementById('mainContent').innerHTML = `<div class="error-box"><strong>Could not connect to ClickUp</strong><br><br>${e.message}<br><br>Make sure the API token is valid. If hosting locally, CORS may block requests — deploy to Netlify or a web server.</div>`;
+    document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    document.getElementById('mainContent').innerHTML=`<div class="error-box"><strong>Could not connect to ClickUp</strong><br><br>${e.message}<br><br>Make sure the API token is valid. If hosting locally, CORS may block requests — deploy to Netlify or a web server.</div>`;
   }
 }
 
-loadData();
+document.addEventListener("DOMContentLoaded", loadData);
 </script>
 </body>
 </html>
