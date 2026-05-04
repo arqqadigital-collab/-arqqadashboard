@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arqq·a — Ops Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #eeede9;
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b67;
+    --text-tertiary: #9b9b96;
+    --border-light: rgba(0,0,0,0.08);
+    --border-mid: rgba(0,0,0,0.14);
+    --border-strong: rgba(0,0,0,0.22);
+    --accent: #E24B4A;
+    --accent-light: #FCEBEB;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1c1c1a;
+      --bg-secondary: #242422;
+      --bg-tertiary: #2c2c2a;
+      --text-primary: #f0efe9;
+      --text-secondary: #a0a09a;
+      --text-tertiary: #6b6b66;
+      --border-light: rgba(255,255,255,0.07);
+      --border-mid: rgba(255,255,255,0.12);
+      --border-strong: rgba(255,255,255,0.2);
+      --accent-light: #3a1010;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .topnav {
+    background: var(--bg-primary);
+    border-bottom: 0.5px solid var(--border-mid);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .logo .dot { color: var(--accent); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  select, button {
+    font-family: inherit;
+    font-size: 12px;
+    padding: 6px 11px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-mid);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:hover, button:hover { border-color: var(--border-strong); }
+  select:focus { border-color: var(--accent); }
+
+  button.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: transparent;
+    font-weight: 500;
+  }
+  button.primary:hover { opacity: 0.88; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+  }
+  .stat-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 600; color: var(--text-primary); line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 5px; }
+  .stat.danger .stat-value { color: #E24B4A; }
+  .stat.warn .stat-value { color: #BA7517; }
+  .stat.ok .stat-value { color: #1D9E75; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+  .grid-full { margin-bottom: 1.5rem; }
+
+  @media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .container { padding: 1rem; }
+    .topnav { padding: 0 1rem; flex-wrap: wrap; height: auto; padding: 10px 1rem; gap: 8px; }
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 10px;
+  }
+
+  .card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+  }
+
+  .task-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--border-light);
+    font-size: 12px;
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-name { flex: 1; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task-client { font-size: 11px; color: var(--text-tertiary); min-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task-due { font-size: 11px; min-width: 64px; text-align: right; }
+  .task-due.overdue { color: #E24B4A; font-weight: 500; }
+  .task-due.soon { color: #BA7517; }
+  .task-due.ok { color: #1D9E75; }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge.todo { background: #F1EFE8; color: #5F5E5A; }
+  .badge.prog { background: #E6F1FB; color: #185FA5; }
+  .badge.review { background: #FAEEDA; color: #854F0B; }
+  .badge.done { background: #EAF3DE; color: #3B6D11; }
+  .badge.block { background: #FCEBEB; color: #A32D2D; }
+
+  @media (prefers-color-scheme: dark) {
+    .badge.todo { background: #2c2c2a; color: #a0a09a; }
+    .badge.prog { background: #0c2640; color: #85B7EB; }
+    .badge.review { background: #2a1e08; color: #FAC775; }
+    .badge.done { background: #0f2206; color: #97C459; }
+    .badge.block { background: #2a0a0a; color: #F09595; }
+  }
+
+  .client-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .client-card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    transition: border-color 0.15s;
+  }
+  .client-card:hover { border-color: var(--border-strong); }
+
+  .client-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .health-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: #1D9E75; }
+  .dot-amber { background: #BA7517; }
+  .dot-red { background: #E24B4A; }
+
+  .progress-bar { height: 4px; background: var(--bg-secondary); border-radius: 2px; margin-bottom: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+  .client-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); }
+
+  .assignee-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 13px;
+  }
+  .assignee-row:not(:last-child) { border-bottom: 0.5px solid var(--border-light); }
+
+  .avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .assignee-name { flex: 1; color: var(--text-primary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .workload-bar { flex: 2; height: 5px; background: var(--bg-secondary); border-radius: 2px; overflow: hidden; }
+  .workload-fill { height: 100%; border-radius: 2px; background: #378ADD; transition: width 0.5s ease; }
+  .workload-fill.heavy { background: #E24B4A; }
+  .workload-fill.mid { background: #BA7517; }
+  .workload-count { font-size: 12px; color: var(--text-secondary); min-width: 28px; text-align: right; }
+
+  .cal-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+  .cal-day-label { font-size: 11px; color: var(--text-tertiary); text-align: center; padding: 2px 0; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-cell {
+    min-height: 64px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+  .cal-date { color: var(--text-tertiary); margin-bottom: 3px; font-size: 11px; font-weight: 500; }
+  .cal-task {
+    background: #B5D4F4;
+    color: #0C447C;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 9px;
+    font-weight: 500;
+  }
+  .cal-task.pub { background: #C0DD97; color: #27500A; }
+  .cal-task.rev { background: #FAC775; color: #633806; }
+  .cal-today { border: 1.5px solid var(--accent); }
+
+  @media (prefers-color-scheme: dark) {
+    .cal-task { background: #0c2640; color: #85B7EB; }
+    .cal-task.pub { background: #0f2206; color: #97C459; }
+    .cal-task.rev { background: #2a1e08; color: #FAC775; }
+  }
+
+  .bottleneck-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--border-light);
+    font-size: 12px;
+  }
+  .bottleneck-row:last-child { border-bottom: none; }
+  .stuck-pill {
+    background: #FCEBEB;
+    color: #A32D2D;
+    padding: 2px 9px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .stuck-pill { background: #2a0a0a; color: #F09595; }
+  }
+
+  .timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--border-light);
+    font-size: 12px;
+  }
+  .timeline-row:last-child { border-bottom: none; }
+  .tl-name { min-width: 130px; max-width: 130px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+  .tl-bar-wrap { flex: 1; height: 7px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
+  .tl-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .tl-pct { min-width: 36px; text-align: right; color: var(--text-secondary); font-size: 11px; }
+  .tl-due { min-width: 64px; text-align: right; font-size: 11px; color: var(--text-tertiary); }
+  .tl-due.overdue { color: #E24B4A; font-weight: 500; }
+  .tl-due.soon { color: #BA7517; }
+
+  .ai-box {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.7;
+  }
+  .ai-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 10px;
+  }
+  .ai-item { display: flex; gap: 10px; margin-bottom: 7px; align-items: flex-start; }
+  .ai-bullet { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-top: 7px; flex-shrink: 0; }
+
+  .loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    gap: 14px;
+  }
+
+  .spinner {
+    width: 26px; height: 26px;
+    border: 2px solid var(--border-mid);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    background: #FCEBEB;
+    color: #A32D2D;
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .error-box { background: #2a0a0a; color: #F09595; }
+  }
+
+  .empty { font-size: 13px; color: var(--text-tertiary); padding: 10px 0; }
+
+  .last-updated {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">arqq<span class="dot">·</span>a <span style="font-size:13px;font-weight:400;color:var(--text-tertiary);">ops dashboard</span></div>
+  <div class="nav-right">
+    <select id="filterSpace"><option value="all">All spaces</option></select>
+    <select id="filterClient"><option value="all">All clients</option></select>
+    <select id="filterAssignee"><option value="all">All team</option></select>
+    <select id="filterStatus"><option value="all">All statuses</option></select>
+    <span class="last-updated" id="lastUpdated"></span>
+    <button class="primary" onclick="refreshAll()">↻ Refresh</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div id="mainContent">
+    <div class="loader"><div class="spinner"></div><span>Connecting to ClickUp...</span></div>
+  </div>
+</div>
+
+<script>
+const API_TOKEN = 'pk_93647571_I5V8ZL90AAK46O5FRIRUE2VH8VZCK2RO';
+const BASE = 'https://api.clickup.com/api/v2';
+let allTasks = [];
+
+async function cu(path) {
+  const r = await fetch(BASE + path, { headers: { Authorization: API_TOKEN } });
+  if (!r.ok) throw new Error('ClickUp API error ' + r.status + ' on ' + path);
+  return r.json();
+}
+
+function setLoaderMsg(msg) {
+  const el = document.getElementById('loaderMsg');
+  if (el) el.textContent = msg;
+}
+
+async function getWorkspaceId() {
+  const d = await cu('/team');
+  return d.teams[0].id;
+}
+
+async function getAllTasks(teamId) {
+  // Build list->folder/space map in parallel first
+  const sData = await cu('/team/' + teamId + '/space?archived=false');
+  const spaces = sData.spaces;
+  const listMap = {};
+
+  setLoaderMsg('Loading workspace structure...');
+
+  await Promise.all(spaces.map(async space => {
+    const [fData, flData] = await Promise.all([
+      cu('/space/' + space.id + '/folder?archived=false'),
+      cu('/space/' + space.id + '/list?archived=false')
+    ]);
+    flData.lists.forEach(l => {
+      listMap[l.id] = { name: l.name, folderName: 'Unfoldered', spaceName: space.name };
+    });
+    await Promise.all(fData.folders.map(async folder => {
+      const lData = await cu('/folder/' + folder.id + '/list?archived=false');
+      lData.lists.forEach(l => {
+        listMap[l.id] = { name: l.name, folderName: folder.name, spaceName: space.name };
+      });
+    }));
+  }));
+
+  // Fetch all tasks via team-level endpoint — one call per page instead of per list
+  setLoaderMsg('Fetching tasks...');
+  const tasks = [];
+  let page = 0;
+
+  while (page < 15) {
+    setLoaderMsg('Fetching tasks... (' + tasks.length + ' loaded)');
+    const params = new URLSearchParams({
+      page: page,
+      order_by: 'updated',
+      reverse: 'true',
+      include_closed: 'true',
+      subtasks: 'true'
+    });
+    const tData = await cu('/team/' + teamId + '/task?' + params.toString());
+    const batch = tData.tasks || [];
+    batch.forEach(t => {
+      const info = listMap[t.list && t.list.id] || {};
+      t._space = info.spaceName || (t.space && t.space.name) || 'Unknown';
+      t._folder = info.folderName || 'Unfoldered';
+      t._list = info.name || (t.list && t.list.name) || '';
+    });
+    tasks.push(...batch);
+    if (!batch.length || tData.last_page) break;
+    page++;
+  }
+  return tasks;
+}
+
+function statusClass(s) {
+  if (!s) return 'todo';
+  const n = s.toLowerCase();
+  if (n.includes('progress') || n === 'doing') return 'prog';
+  if (n.includes('review') || n.includes('approval')) return 'review';
+  if (n.includes('complete') || n.includes('done') || n.includes('closed')) return 'done';
+  if (n.includes('block') || n.includes('hold')) return 'block';
+  return 'todo';
+}
+
+function fmtDate(ts) {
+  if (!ts) return '';
+  const d = new Date(parseInt(ts));
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+}
+
+function dueClass(ts) {
+  if (!ts) return '';
+  const diff = parseInt(ts) - Date.now();
+  if (diff < 0) return 'overdue';
+  if (diff < 3 * 86400000) return 'soon';
+  return 'ok';
+}
+
+function daysStuck(ts) {
+  if (!ts) return 0;
+  return Math.floor((Date.now() - parseInt(ts)) / 86400000);
+}
+
+function getInitials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+const AVG_COLORS = [
+  { bg:'#B5D4F4', fg:'#0C447C' }, { bg:'#9FE1CB', fg:'#085041' },
+  { bg:'#FAC775', fg:'#633806' }, { bg:'#F4C0D1', fg:'#72243E' },
+  { bg:'#CED0F6', fg:'#3C3489' }, { bg:'#F5C4B3', fg:'#993C1D' }
+];
+function avatarColor(name) {
+  let h = 0; for (const c of (name || '')) h = (h * 31 + c.charCodeAt(0)) % AVG_COLORS.length;
+  return AVG_COLORS[h];
+}
+
+function getFiltered() {
+  const sp = document.getElementById('filterSpace').value;
+  const cl = document.getElementById('filterClient').value;
+  const as = document.getElementById('filterAssignee').value;
+  const st = document.getElementById('filterStatus').value;
+  return allTasks.filter(t => {
+    if (sp !== 'all' && t._space !== sp) return false;
+    if (cl !== 'all' && t._folder !== cl) return false;
+    if (as !== 'all' && !(t.assignees || []).some(a => (a.username || a.email) === as)) return false;
+    if (st !== 'all' && (t.status?.status || '').toLowerCase() !== st) return false;
+    return true;
+  });
+}
+
+function populateFilters() {
+  const spSel = document.getElementById('filterSpace');
+  const clSel = document.getElementById('filterClient');
+  const asSel = document.getElementById('filterAssignee');
+  const stSel = document.getElementById('filterStatus');
+  while (spSel.options.length > 1) spSel.remove(1);
+  while (clSel.options.length > 1) clSel.remove(1);
+  while (asSel.options.length > 1) asSel.remove(1);
+  while (stSel.options.length > 1) stSel.remove(1);
+
+  [...new Set(allTasks.map(t => t._space).filter(Boolean))].sort().forEach(s => {
+    const o = document.createElement('option'); o.value = s; o.textContent = s; spSel.appendChild(o);
+  });
+  [...new Set(allTasks.map(t => t._folder).filter(f => f && f !== 'Unfoldered'))].sort().forEach(c => {
+    const o = document.createElement('option'); o.value = c; o.textContent = c; clSel.appendChild(o);
+  });
+  const am = {};
+  allTasks.forEach(t => (t.assignees || []).forEach(a => { const k = a.username || a.email; if (k) am[k] = k; }));
+  Object.values(am).sort().forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; asSel.appendChild(o); });
+  [...new Set(allTasks.map(t => (t.status?.status || '')).filter(Boolean).map(s => s.toLowerCase()))].sort().forEach(s => {
+    const o = document.createElement('option'); o.value = s; o.textContent = s; stSel.appendChild(o);
+  });
+
+  [spSel, clSel, asSel, stSel].forEach(sel => { sel.onchange = renderDashboard; });
+}
+
+async function getAIInsights(tasks) {
+  const now = Date.now();
+  const summary = {
+    total: tasks.length,
+    overdue: tasks.filter(t => t.due_date && parseInt(t.due_date) < now && !['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))).length,
+    byClient: {},
+    bottlenecks: tasks.filter(t => t.date_updated && daysStuck(t.date_updated) > 5 && !['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))).slice(0,5).map(t => ({ name: t.name, folder: t._folder, days: daysStuck(t.date_updated), status: t.status?.status }))
+  };
+  tasks.forEach(t => {
+    if (!summary.byClient[t._folder]) summary.byClient[t._folder] = { total:0, done:0, overdue:0 };
+    summary.byClient[t._folder].total++;
+    if (['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))) summary.byClient[t._folder].done++;
+    if (t.due_date && parseInt(t.due_date) < now) summary.byClient[t._folder].overdue++;
+  });
+
+  const prompt = `You are an operations analyst for ARQQA Digital, a digital marketing agency in Egypt operating across Egypt, KSA, and UAE. Analyze this ClickUp workspace data and give 4 sharp, actionable insights. Focus on bottlenecks, overloaded team members, at-risk clients, and urgent priorities. Be direct and specific. Respond ONLY with valid JSON, no markdown: { "insights": ["insight1", "insight2", "insight3", "insight4"] }\n\nData: ${JSON.stringify(summary)}`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const d = await r.json();
+    const txt = (d.content || []).find(c => c.type === 'text')?.text || '';
+    const clean = txt.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean).insights;
+  } catch (e) {
+    return ['AI insights unavailable — check API connectivity.'];
+  }
+}
+
+function renderDashboard() {
+  const tasks = getFiltered();
+  const now = Date.now();
+
+  const total = tasks.length;
+  const overdue = tasks.filter(t => t.due_date && parseInt(t.due_date) < now && !['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))).length;
+  const inProgress = tasks.filter(t => (t.status?.status||'').toLowerCase().includes('progress')).length;
+  const doneThisWeek = tasks.filter(t => t.date_closed && (now - parseInt(t.date_closed)) < 7*86400000).length;
+  const dueSoon = tasks.filter(t => t.due_date && parseInt(t.due_date) > now && parseInt(t.due_date) < now + 3*86400000).length;
+  const blocked = tasks.filter(t => (t.status?.status||'').toLowerCase().includes('block')).length;
+
+  // Workload
+  const workload = {};
+  tasks.forEach(t => (t.assignees||[]).forEach(a => {
+    const k = a.username || a.email || String(a.id);
+    if (!workload[k]) workload[k] = { name: a.username || a.email || 'Unknown', count: 0 };
+    workload[k].count++;
+  }));
+  const wList = Object.values(workload).sort((a,b) => b.count - a.count).slice(0, 9);
+  const maxW = wList[0]?.count || 1;
+
+  // Clients — split by space type
+  const socialClients = {};
+  const webAppClients = {};
+  tasks.forEach(t => {
+    if (!t._folder || t._folder === 'Unfoldered') return;
+    const isWeb = t._space && (t._space.toLowerCase().includes('web') || t._space.toLowerCase().includes('app'));
+    const bucket = isWeb ? webAppClients : socialClients;
+    if (!bucket[t._folder]) bucket[t._folder] = { name: t._folder, total:0, done:0, overdue:0 };
+    bucket[t._folder].total++;
+    if (['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))) bucket[t._folder].done++;
+    if (t.due_date && parseInt(t.due_date) < now) bucket[t._folder].overdue++;
+  });
+  const socialCList = Object.values(socialClients).sort((a,b) => b.total - a.total);
+  const webAppCList = Object.values(webAppClients).sort((a,b) => b.total - a.total);
+
+  // Social calendar
+  const socialTasks = tasks.filter(t => (t._list||'').toLowerCase().includes('social'));
+  const weekStart = new Date(); weekStart.setHours(0,0,0,0); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const calDays = Array.from({length:7}, (_,i) => { const d = new Date(weekStart); d.setDate(d.getDate()+i); return d; });
+  const calMap = {};
+  socialTasks.forEach(t => {
+    if (!t.due_date) return;
+    const key = new Date(parseInt(t.due_date)).toDateString();
+    if (!calMap[key]) calMap[key] = [];
+    calMap[key].push(t);
+  });
+
+  // Web timeline
+  const webTasks = tasks.filter(t => t._space && (t._space.toLowerCase().includes('web') || t._space.toLowerCase().includes('app')));
+  const webClients = {};
+  webTasks.forEach(t => {
+    if (!webClients[t._folder]) webClients[t._folder] = { name: t._folder, total:0, done:0, due: null };
+    webClients[t._folder].total++;
+    if (['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))) webClients[t._folder].done++;
+    if (t.due_date && (!webClients[t._folder].due || parseInt(t.due_date) > webClients[t._folder].due)) webClients[t._folder].due = parseInt(t.due_date);
+  });
+  const wbList = Object.values(webClients).sort((a,b) => (a.due||0) - (b.due||0));
+
+  // Bottlenecks
+  const bottlenecks = tasks.filter(t => t.date_updated && daysStuck(t.date_updated) > 4 && !['complete','closed','done'].some(x => (t.status?.status||'').toLowerCase().includes(x))).sort((a,b) => daysStuck(b.date_updated) - daysStuck(a.date_updated)).slice(0, 7);
+
+  // Recent activity
+  const recent = [...tasks].sort((a,b) => (parseInt(b.date_updated)||0) - (parseInt(a.date_updated)||0)).slice(0, 10);
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-label">Total tasks</div><div class="stat-value">${total}</div><div class="stat-sub">across all clients</div></div>
+      <div class="stat danger"><div class="stat-label">Overdue</div><div class="stat-value">${overdue}</div><div class="stat-sub">need immediate attention</div></div>
+      <div class="stat"><div class="stat-label">In progress</div><div class="stat-value">${inProgress}</div></div>
+      <div class="stat warn"><div class="stat-label">Due in 3 days</div><div class="stat-value">${dueSoon}</div></div>
+      <div class="stat ok"><div class="stat-label">Done this week</div><div class="stat-value">${doneThisWeek}</div></div>
+      <div class="stat danger"><div class="stat-label">Blocked</div><div class="stat-value">${blocked}</div></div>
+    </div>
+
+    <div class="grid-full">
+      <div class="section-label">AI insights</div>
+      <div class="ai-box" id="aiBox">
+        <div class="ai-label">Analyzing workspace...</div>
+        <div class="spinner" style="width:16px;height:16px;margin:6px 0;"></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="section-label">Team workload</div>
+        <div class="card">
+          ${wList.length ? wList.map(w => {
+            const pct = Math.round((w.count / maxW) * 100);
+            const cls = pct > 80 ? 'heavy' : pct > 50 ? 'mid' : '';
+            const av = avatarColor(w.name);
+            return `<div class="assignee-row">
+              <div class="avatar" style="background:${av.bg};color:${av.fg}">${getInitials(w.name)}</div>
+              <div class="assignee-name">${w.name}</div>
+              <div class="workload-bar"><div class="workload-fill ${cls}" style="width:${pct}%"></div></div>
+              <div class="workload-count">${w.count}</div>
+            </div>`;
+          }).join('') : '<div class="empty">No assignees found</div>'}
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Bottlenecks</div>
+        <div class="card">
+          ${bottlenecks.length ? bottlenecks.map(t => `
+            <div class="bottleneck-row">
+              <div style="flex:1;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.name}</div>
+              <div style="font-size:11px;color:var(--text-tertiary);min-width:80px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t._folder}</div>
+              <div class="stuck-pill">${daysStuck(t.date_updated)}d stuck</div>
+            </div>
+          `).join('') : '<div class="empty">No bottlenecks detected — good job!</div>'}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-full">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div class="section-label" style="margin-bottom:0;">Client project status</div>
+        <div style="display:flex;gap:8px;">
+          <span style="font-size:11px;padding:2px 9px;border-radius:99px;background:#E6F1FB;color:#185FA5;font-weight:500;">&#9679; Social media</span>
+          <span style="font-size:11px;padding:2px 9px;border-radius:99px;background:#EAF3DE;color:#3B6D11;font-weight:500;">&#9679; Web &amp; apps</span>
+        </div>
+      </div>
+
+      ${socialCList.length ? `
+      <div style="margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:500;color:#185FA5;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:2px;">Social media clients — Operations</div>
+        <div class="client-grid">
+          ${socialCList.map(c => {
+            const pct = c.total ? Math.round((c.done / c.total) * 100) : 0;
+            const health = c.overdue > 3 ? 'dot-red' : c.overdue > 0 ? 'dot-amber' : 'dot-green';
+            const healthLabel = c.overdue > 3 ? 'at risk' : c.overdue > 0 ? 'watch' : 'on track';
+            const barColor = pct > 70 ? '#1D9E75' : pct > 40 ? '#BA7517' : '#E24B4A';
+            return `<div class="client-card" style="border-top:2px solid #B5D4F4;">
+              <div class="client-name"><span class="health-dot ${health}"></span>${c.name}</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${barColor}"></div></div>
+              <div class="client-meta"><span>${pct}% done</span><span>${healthLabel}</span></div>
+              <div style="font-size:11px;color:var(--text-tertiary);margin-top:5px;">${c.total} tasks &middot; ${c.overdue} overdue</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
+      ${webAppCList.length ? `
+      <div style="margin-top:${socialCList.length ? '18px' : '0'};">
+        <div style="font-size:11px;font-weight:500;color:#3B6D11;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:2px;">Web &amp; apps clients — Websites &amp; Apps</div>
+        <div class="client-grid">
+          ${webAppCList.map(c => {
+            const pct = c.total ? Math.round((c.done / c.total) * 100) : 0;
+            const health = c.overdue > 3 ? 'dot-red' : c.overdue > 0 ? 'dot-amber' : 'dot-green';
+            const healthLabel = c.overdue > 3 ? 'at risk' : c.overdue > 0 ? 'watch' : 'on track';
+            const barColor = pct > 70 ? '#1D9E75' : pct > 40 ? '#BA7517' : '#E24B4A';
+            return `<div class="client-card" style="border-top:2px solid #C0DD97;">
+              <div class="client-name"><span class="health-dot ${health}"></span>${c.name}</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${barColor}"></div></div>
+              <div class="client-meta"><span>${pct}% done</span><span>${healthLabel}</span></div>
+              <div style="font-size:11px;color:var(--text-tertiary);margin-top:5px;">${c.total} tasks &middot; ${c.overdue} overdue</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
+      ${!socialCList.length && !webAppCList.length ? '<div class="empty">No client data found</div>' : ''}
+    </div>
+
+    <div class="grid-full">
+      <div class="section-label">Social media calendar — this week</div>
+      <div class="card">
+        <div class="cal-header">
+          ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-day-label">${d}</div>`).join('')}
+        </div>
+        <div class="cal-grid">
+          ${calDays.map(d => {
+            const ts = calMap[d.toDateString()] || [];
+            const isToday = d.toDateString() === new Date().toDateString();
+            return `<div class="cal-cell ${isToday ? 'cal-today' : ''}">
+              <div class="cal-date">${d.getDate()}</div>
+              ${ts.slice(0,3).map(t => {
+                const sc = statusClass(t.status?.status);
+                const cls = sc === 'done' ? 'pub' : sc === 'review' ? 'rev' : '';
+                return `<div class="cal-task ${cls}" title="${t.name}">${t.name}</div>`;
+              }).join('')}
+              ${ts.length > 3 ? `<div style="font-size:9px;color:var(--text-tertiary);">+${ts.length-3} more</div>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+        ${socialTasks.length === 0 ? '<div class="empty" style="margin-top:10px;">No social media tasks with due dates this week</div>' : `<div style="margin-top:10px;font-size:11px;color:var(--text-tertiary);">${socialTasks.length} total social tasks &middot; blue = scheduled &middot; green = published &middot; amber = in review</div>`}
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="section-label">Websites & apps — delivery timeline</div>
+        <div class="card">
+          ${wbList.length ? wbList.map(c => {
+            const pct = c.total ? Math.round((c.done / c.total) * 100) : 0;
+            const barColor = pct > 70 ? '#1D9E75' : pct > 40 ? '#BA7517' : '#E24B4A';
+            const dc = c.due ? (c.due < now ? 'overdue' : c.due < now + 7*86400000 ? 'soon' : '') : '';
+            return `<div class="timeline-row">
+              <div class="tl-name">${c.name}</div>
+              <div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%;background:${barColor}"></div></div>
+              <div class="tl-pct">${pct}%</div>
+              <div class="tl-due ${dc}">${c.due ? fmtDate(c.due) : 'no date'}</div>
+            </div>`;
+          }).join('') : '<div class="empty">No web/app tasks found in the Websites & Apps space</div>'}
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Recent task activity</div>
+        <div class="card">
+          ${recent.map(t => `
+            <div class="task-row">
+              <div class="task-name" title="${t.name}">${t.name}</div>
+              <div class="task-client">${t._folder}</div>
+              <span class="badge ${statusClass(t.status?.status)}">${t.status?.status || 'no status'}</span>
+              <div class="task-due ${dueClass(t.due_date)}">${t.due_date ? fmtDate(t.due_date) : '—'}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  getAIInsights(tasks).then(insights => {
+    const el = document.getElementById('aiBox');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="ai-label">Claude analysis</div>
+      ${insights.map(i => `<div class="ai-item"><div class="ai-bullet"></div><div>${i}</div></div>`).join('')}
+    `;
+  });
+}
+
+async function refreshAll() {
+  document.getElementById('mainContent').innerHTML = '<div class="loader"><div class="spinner"></div><span id="loaderMsg">Refreshing ClickUp data...</span></div>';
+  await loadData();
+}
+
+async function loadData() {
+  try {
+    document.getElementById('lastUpdated').textContent = '';
+    const teamId = await getWorkspaceId();
+    document.getElementById('mainContent').innerHTML = '<div class="loader"><div class="spinner"></div><span id="loaderMsg">Connecting to ClickUp...</span></div>';
+    allTasks = await getAllTasks(teamId);
+    populateFilters();
+    renderDashboard();
+    document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    document.getElementById('mainContent').innerHTML = `<div class="error-box"><strong>Could not connect to ClickUp</strong><br><br>${e.message}<br><br>Make sure the API token is valid and CORS is not blocking requests. Try opening this from a web server rather than directly from the file system.</div>`;
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
