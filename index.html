@@ -219,6 +219,7 @@ input[type="date"]:focus { border-color:var(--accent); }
 
     <span class="last-updated" id="lastUpdated"></span>
     <button class="primary" onclick="refreshAll()">↻ Refresh</button>
+    <button onclick="showDebug()" style="background:#1a1a18;color:#fff;border-color:#1a1a18;">🔍 Debug</button>
   </div>
 </nav>
 
@@ -805,6 +806,36 @@ async function loadData(){
   }catch(e){
     document.getElementById('mainContent').innerHTML=`<div class="error-box"><strong>Could not connect to ClickUp</strong><br><br>${e.message}<br><br>Make sure the API token is valid. If hosting locally, CORS may block requests — deploy to Netlify or a web server.</div>`;
   }
+}
+
+function showDebug(){
+  if(!allTasks.length){ alert('No tasks loaded yet.'); return; }
+  const {start,end} = dateRange();
+  const sample = allTasks.slice(0,5);
+  const now = Date.now();
+  let html = '<div style="font-family:monospace;font-size:12px;padding:1rem;background:var(--bg-primary);border-radius:12px;border:0.5px solid var(--border-mid);margin-bottom:1rem;">';
+  html += '<div style="font-weight:700;margin-bottom:10px;font-size:14px;">Debug Panel</div>';
+  html += '<div style="margin-bottom:8px;padding:8px;background:var(--bg-secondary);border-radius:6px;">';
+  html += '<b>Date range:</b> '+new Date(start).toISOString()+' → '+new Date(end).toISOString()+'<br>';
+  html += '<b>Mode:</b> '+dateMode+' | <b>selYear:</b> '+selYear+' | <b>selMonth:</b> '+selMonth+'<br>';
+  html += '<b>Total tasks in allTasks:</b> '+allTasks.length+'<br>';
+  html += '<b>Tasks passing filter:</b> '+getFiltered().length;
+  html += '</div>';
+  html += '<div style="margin-bottom:6px;font-weight:600;">First 10 tasks — raw dates:</div>';
+  allTasks.slice(0,10).forEach((t,i)=>{
+    const cr = t.date_created ? new Date(parseInt(t.date_created)).toISOString().slice(0,10) : 'null';
+    const up = t.date_updated ? new Date(parseInt(t.date_updated)).toISOString().slice(0,10) : 'null';
+    const cl = t.date_closed  ? new Date(parseInt(t.date_closed)).toISOString().slice(0,10)  : 'null';
+    const du = t.due_date     ? new Date(parseInt(t.due_date)).toISOString().slice(0,10)     : 'null';
+    const passes = getFiltered().some(f=>f.id===t.id);
+    html += '<div style="padding:5px 8px;margin-bottom:3px;border-radius:4px;background:'+(passes?'#EAF3DE':'#FCEBEB')+';color:'+(passes?'#27500A':'#A32D2D')+'">';
+    html += '<b>'+(i+1)+'. '+t.name.slice(0,40)+'</b><br>';
+    html += 'created:'+cr+' | updated:'+up+' | closed:'+cl+' | due:'+du;
+    html += '</div>';
+  });
+  html += '</div>';
+  const el = document.getElementById('mainContent');
+  el.insertAdjacentHTML('afterbegin', html);
 }
 
 document.addEventListener("DOMContentLoaded", loadData);
