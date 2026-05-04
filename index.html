@@ -454,8 +454,31 @@ function getFiltered(){
     if(sp!=='all'&&t._space!==sp) return false;
     if(cl!=='all'&&t._folder!==cl) return false;
     if(tm!=='all'&&!(t._teams||[]).includes(tm)) return false;
-    const dates=[t.date_created,t.date_updated,t.due_date].map(d=>d?parseInt(d):0);
-    return dates.some(d=>d>=start&&d<=end);
+
+    // A task is active in a period if:
+    // 1. It was created before the end of the range AND
+    // 2. It has no close date (still open), OR was closed after the range started, OR due date falls in range
+    const created   = t.date_created  ? parseInt(t.date_created)  : 0;
+    const closed    = t.date_closed   ? parseInt(t.date_closed)   : 0;
+    const due       = t.due_date      ? parseInt(t.due_date)      : 0;
+    const updated   = t.date_updated  ? parseInt(t.date_updated)  : 0;
+
+    // Must have been created before range ends
+    if(created > end) return false;
+
+    // Include if: still open (no close date)
+    if(!closed) return true;
+
+    // Include if: closed within or after range start (was active during range)
+    if(closed >= start) return true;
+
+    // Include if: due date falls in range
+    if(due >= start && due <= end) return true;
+
+    // Include if: updated within range (touched during period)
+    if(updated >= start && updated <= end) return true;
+
+    return false;
   });
 }
 
